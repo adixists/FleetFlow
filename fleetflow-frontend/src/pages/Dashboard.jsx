@@ -92,6 +92,48 @@ export default function Dashboard() {
                 ))}
             </Grid>
 
+            {/* Filters Section (Required by spec) */}
+            <Paper sx={{ p: 2.5, borderRadius: 3, mb: 3 }}>
+                <Typography variant="h6" sx={{ mb: 2 }}>Fleet Distribution Filters</Typography>
+                <Grid container spacing={2}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
+                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: alpha(PALETTE.sky, 0.05), border: `1px solid ${alpha(PALETTE.sky, 0.1)}` }}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary', mb: 1, textTransform: 'uppercase', letterSpacing: '0.05em' }}>By Vehicle Type</Typography>
+                            {Object.entries(data?.vehiclesByType || {}).map(([type, count]) => (
+                                <Box key={type} sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                                    <Typography variant="body2" sx={{ color: '#F1F5F9' }}>{type}</Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, color: PALETTE.sky }}>{count}</Typography>
+                                </Box>
+                            ))}
+                            {Object.keys(data?.vehiclesByType || {}).length === 0 && <Typography variant="body2" sx={{ color: 'text.secondary' }}>No data</Typography>}
+                        </Box>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 4 }}>
+                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: alpha(PALETTE.violet, 0.05), border: `1px solid ${alpha(PALETTE.violet, 0.1)}` }}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary', mb: 1, textTransform: 'uppercase', letterSpacing: '0.05em' }}>By Status</Typography>
+                            {['available', 'on_trip', 'in_shop', 'retired'].map(status => (
+                                <Box key={status} sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5, alignItems: 'center' }}>
+                                    <Typography variant="body2" sx={{ textTransform: 'capitalize', color: '#F1F5F9' }}>{status.replace('_', ' ')}</Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, color: PALETTE.violet }}>{data?.vehiclesByStatus?.[status] || 0}</Typography>
+                                </Box>
+                            ))}
+                        </Box>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 4 }}>
+                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: alpha(PALETTE.emerald, 0.05), border: `1px solid ${alpha(PALETTE.emerald, 0.1)}` }}>
+                            <Typography variant="subtitle2" sx={{ color: 'text.secondary', mb: 1, textTransform: 'uppercase', letterSpacing: '0.05em' }}>By Region</Typography>
+                            {Object.entries(data?.vehiclesByRegion || {}).map(([region, count]) => (
+                                <Box key={region} sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
+                                    <Typography variant="body2" sx={{ color: '#F1F5F9' }}>{region}</Typography>
+                                    <Typography variant="body2" sx={{ fontWeight: 700, color: PALETTE.emerald }}>{count}</Typography>
+                                </Box>
+                            ))}
+                            {Object.keys(data?.vehiclesByRegion || {}).length === 0 && <Typography variant="body2" sx={{ color: 'text.secondary' }}>No data</Typography>}
+                        </Box>
+                    </Grid>
+                </Grid>
+            </Paper>
+
             {/* Alerts + Status Breakdowns */}
             <Grid container spacing={2.5}>
                 <Grid size={{ xs: 12, md: 4 }}>
@@ -112,7 +154,7 @@ export default function Dashboard() {
 
                 <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                     <Paper sx={{ p: 2.5, borderRadius: 3, height: '100%' }}>
-                        <Typography variant="h6" sx={{ mb: 2 }}>Vehicle Status</Typography>
+                        <Typography variant="h6" sx={{ mb: 2 }}>Vehicle Status Breakdown</Typography>
                         {['available', 'on_trip', 'in_shop', 'retired'].map(s => (
                             <Box key={s} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 1.1, borderBottom: '1px solid rgba(255,255,255,0.05)', '&:last-child': { borderBottom: 'none' } }}>
                                 <StatusChip status={s} />
@@ -126,7 +168,7 @@ export default function Dashboard() {
 
                 <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                     <Paper sx={{ p: 2.5, borderRadius: 3, height: '100%' }}>
-                        <Typography variant="h6" sx={{ mb: 2 }}>Trip Status</Typography>
+                        <Typography variant="h6" sx={{ mb: 2 }}>Trip Status Breakdown</Typography>
                         {['draft', 'dispatched', 'completed', 'cancelled'].map(s => (
                             <Box key={s} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 1.1, borderBottom: '1px solid rgba(255,255,255,0.05)', '&:last-child': { borderBottom: 'none' } }}>
                                 <StatusChip status={s} />

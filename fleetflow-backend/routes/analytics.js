@@ -33,6 +33,34 @@ router.get('/', authMiddleware(['manager', 'analyst']), async (req, res) => {
             })
         );
 
+        // Vehicle ROI = (Revenue - (Maintenance + Fuel)) / Acquisition Cost
+        const vehicleROI = await Promise.all(
+            vehicles.map(async (v) => {
+                const fuelAgg = await prisma.fuelLog.aggregate({
+                    where: { vehicleId: v.id },
+                    _sum: { cost: true },
+                });
+                const maintAgg = await prisma.maintenanceLog.aggregate({
+                    where: { vehicleId: v.id },
+                    _sum: { cost: true },
+                });
+                const totalExpenses = (fuelAgg._sum.cost || 0) + (maintAgg._sum.cost || 0);
+                const roi = v.acquisitionCost > 0
+                    ? Math.round(((v.totalRevenue - totalExpenses) / v.acquisitionCost) * 100)
+                    : 0;
+
+                return {
+                    vehicleId: v.id,
+                    vehicleName: v.name,
+                    licensePlate: v.licensePlate,
+                    acquisitionCost: v.acquisitionCost,
+                    totalRevenue: v.totalRevenue,
+                    totalExpenses,
+                    roiPercentage: roi,
+                };
+            })
+        );
+
         // Monthly trip counts (last 12 months)
         const trips = await prisma.trip.findMany({ orderBy: { createdAt: 'asc' } });
         const monthlyTrips = {};
@@ -44,6 +72,9 @@ router.get('/', authMiddleware(['manager', 'analyst']), async (req, res) => {
         // Cost breakdown
         const fuelTotal = await prisma.fuelLog.aggregate({ _sum: { cost: true } });
         const maintTotal = await prisma.maintenanceLog.aggregate({ _sum: { cost: true } });
+
+        // Total Revenue for dashboard/analytics
+        const revenueTotal = vehicles.reduce((sum, v) => sum + v.totalRevenue, 0);
 
         // Top drivers by completed trips
         const drivers = await prisma.driver.findMany({ include: { _count: { select: { trips: true } } } });
@@ -58,7 +89,12 @@ router.get('/', authMiddleware(['manager', 'analyst']), async (req, res) => {
         res.json({
             fleetUtilization,
             fuelEfficiency,
+            vehicleROI,
             monthlyTrips,
+            metrics: {
+                totalRevenue: revenueTotal,
+                totalExpenses: (fuelTotal._sum.cost || 0) + (maintTotal._sum.cost || 0)
+            },
             costBreakdown: {
                 fuel: fuelTotal._sum.cost || 0,
                 maintenance: maintTotal._sum.cost || 0,

@@ -19,8 +19,12 @@ model Vehicle {
   id              Int              @id @default(autoincrement())
   name            String
   licensePlate    String           @unique
+  type            String           @default("Van") // Truck, Van, Bike
+  region          String           @default("North") 
   maxCapacity     Float
   odometer        Float            @default(0)
+  acquisitionCost Float            @default(0)
+  totalRevenue    Float            @default(0)
   status          String           @default("available") // available, on_trip, in_shop, retired
   createdAt       DateTime         @default(now())
   trips           Trip[]

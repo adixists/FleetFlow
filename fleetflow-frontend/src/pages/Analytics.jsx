@@ -188,8 +188,8 @@ export default function Analytics() {
                 </Box>
             </Paper>
 
-            {/* Top drivers bar */}
-            <Paper sx={{ p: 2.5, borderRadius: 3 }}>
+            {/* Top drivers bar (now moved down slightly) */}
+            <Paper sx={{ p: 2.5, borderRadius: 3, mb: 3 }}>
                 <Typography variant="h6" sx={{ mb: 2 }}>Top Drivers</Typography>
                 <ResponsiveContainer width="100%" height={260}>
                     <BarChart data={data.topDrivers ?? []} layout="vertical" margin={{ top: 0, right: 20, left: 20, bottom: 0 }}>
@@ -212,6 +212,42 @@ export default function Analytics() {
                         <Bar dataKey="safetyScore" name="Safety Score" fill="url(#barGrad2)" radius={[0, 6, 6, 0]} barSize={10} />
                     </BarChart>
                 </ResponsiveContainer>
+            </Paper>
+
+            {/* Vehicle ROI table */}
+            <Paper sx={{ p: 2.5, borderRadius: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Typography variant="h6">Vehicle Return on Investment (ROI)</Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>ROI = (Revenue - Expenses) / Acquisition Cost</Typography>
+                </Box>
+                <Box sx={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                            <tr>
+                                {['Vehicle', 'Plate', 'Acquisition Cost', 'Total Revenue', 'Total Expenses', 'ROI %'].map(h => (
+                                    <th key={h} style={{ textAlign: 'left', padding: '10px 14px', borderBottom: '1px solid rgba(255,255,255,0.07)', color: '#7E8FA8', fontWeight: 700, fontSize: '0.72rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{h}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.vehicleROI?.map((v, i) => {
+                                const isPositive = v.roiPercentage >= 0;
+                                return (
+                                    <tr key={v.vehicleId} style={{ background: i % 2 === 1 ? 'rgba(255,255,255,0.02)' : 'transparent' }}>
+                                        <td style={{ padding: '10px 14px', fontWeight: 600, color: '#F1F5F9' }}>{v.vehicleName}</td>
+                                        <td style={{ padding: '10px 14px', color: '#7E8FA8', fontFamily: 'monospace', fontSize: '0.85rem' }}>{v.licensePlate}</td>
+                                        <td style={{ padding: '10px 14px' }}>${v.acquisitionCost?.toLocaleString()}</td>
+                                        <td style={{ padding: '10px 14px', color: PALETTE.emerald }}>${v.totalRevenue?.toLocaleString()}</td>
+                                        <td style={{ padding: '10px 14px', color: PALETTE.rose }}>${v.totalExpenses?.toLocaleString()}</td>
+                                        <td style={{ padding: '10px 14px', fontWeight: 800, color: isPositive ? PALETTE.emerald : PALETTE.rose }}>
+                                            {v.roiPercentage}%
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </Box>
             </Paper>
         </Box>
     );

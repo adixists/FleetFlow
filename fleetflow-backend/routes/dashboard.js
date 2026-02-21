@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 // GET /dashboard — aggregated KPIs
 router.get('/', authMiddleware([]), async (req, res) => {
     try {
-        // Vehicle counts by status
+        // Vehicle counts by status, type, region
         const vehicles = await prisma.vehicle.findMany();
         const vehiclesByStatus = {
             total: vehicles.length,
@@ -17,6 +17,16 @@ router.get('/', authMiddleware([]), async (req, res) => {
             in_shop: vehicles.filter(v => v.status === 'in_shop').length,
             retired: vehicles.filter(v => v.status === 'retired').length,
         };
+
+        const vehiclesByType = vehicles.reduce((acc, v) => {
+            acc[v.type] = (acc[v.type] || 0) + 1;
+            return acc;
+        }, {});
+
+        const vehiclesByRegion = vehicles.reduce((acc, v) => {
+            acc[v.region] = (acc[v.region] || 0) + 1;
+            return acc;
+        }, {});
 
         // Driver counts by status
         const drivers = await prisma.driver.findMany();
@@ -54,6 +64,8 @@ router.get('/', authMiddleware([]), async (req, res) => {
 
         res.json({
             vehiclesByStatus,
+            vehiclesByType,
+            vehiclesByRegion,
             driversByStatus,
             tripsByState,
             alerts,

@@ -35,9 +35,9 @@ router.get('/:id', authMiddleware([]), async (req, res) => {
 // POST /vehicles — create
 router.post('/', authMiddleware(['manager']), async (req, res) => {
     try {
-        const { name, licensePlate, maxCapacity, odometer } = req.body;
+        const { name, licensePlate, type, region, maxCapacity, odometer, acquisitionCost } = req.body;
         const vehicle = await prisma.vehicle.create({
-            data: { name, licensePlate, maxCapacity: parseFloat(maxCapacity), odometer: parseFloat(odometer || 0) },
+            data: { name, licensePlate, type: type || 'Van', region: region || 'North', maxCapacity: parseFloat(maxCapacity), odometer: parseFloat(odometer || 0), acquisitionCost: parseFloat(acquisitionCost || 0) },
         });
 
         const io = req.app.get('io');

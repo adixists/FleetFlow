@@ -12,7 +12,7 @@ import { Add, Edit, Delete, Refresh, DirectionsCar } from '@mui/icons-material';
 import { PALETTE, PAGE_COLORS } from '../tokens';
 import { alpha } from '@mui/material/styles';
 
-const empty = { name: '', licensePlate: '', maxCapacity: '', odometer: '0' };
+const empty = { name: '', licensePlate: '', type: 'Van', region: 'North', maxCapacity: '', odometer: '0', acquisitionCost: '0' };
 
 export default function Vehicles() {
     const { hasRole } = useAuth();
@@ -37,13 +37,13 @@ export default function Vehicles() {
 
     const openDialog = (v = null) => {
         setEditId(v?.id ?? null);
-        setForm(v ? { name: v.name, licensePlate: v.licensePlate, maxCapacity: String(v.maxCapacity), odometer: String(v.odometer) } : empty);
+        setForm(v ? { name: v.name, licensePlate: v.licensePlate, type: v.type || 'Van', region: v.region || 'North', maxCapacity: String(v.maxCapacity), odometer: String(v.odometer), acquisitionCost: String(v.acquisitionCost || 0) } : empty);
         setError(''); setOpen(true);
     };
 
     const handleSave = async () => {
         try {
-            const body = { name: form.name, licensePlate: form.licensePlate, maxCapacity: parseFloat(form.maxCapacity), odometer: parseFloat(form.odometer) };
+            const body = { name: form.name, licensePlate: form.licensePlate, type: form.type, region: form.region, maxCapacity: parseFloat(form.maxCapacity), odometer: parseFloat(form.odometer), acquisitionCost: parseFloat(form.acquisitionCost || 0) };
             if (editId) await api.put(`/vehicles/${editId}`, body);
             else await api.post('/vehicles', body);
             setOpen(false); fetchVehicles();
@@ -115,7 +115,23 @@ export default function Vehicles() {
                     <Grid container spacing={2} sx={{ mt: 0.5 }}>
                         <Grid size={{ xs: 12 }}><TextField fullWidth label="Vehicle Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></Grid>
                         <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="License Plate" value={form.licensePlate} onChange={e => setForm({ ...form, licensePlate: e.target.value })} /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            <TextField select fullWidth label="Vehicle Type" value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} SelectProps={{ native: true }}>
+                                <option value="Van">Van</option>
+                                <option value="Truck">Truck</option>
+                                <option value="Bike">Bike</option>
+                            </TextField>
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            <TextField select fullWidth label="Region" value={form.region} onChange={e => setForm({ ...form, region: e.target.value })} SelectProps={{ native: true }}>
+                                <option value="North">North</option>
+                                <option value="South">South</option>
+                                <option value="East">East</option>
+                                <option value="West">West</option>
+                            </TextField>
+                        </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Max Capacity (kg)" type="number" value={form.maxCapacity} onChange={e => setForm({ ...form, maxCapacity: e.target.value })} /></Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Acquisition Cost ($)" type="number" value={form.acquisitionCost} onChange={e => setForm({ ...form, acquisitionCost: e.target.value })} /></Grid>
                         <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Odometer (km)" type="number" value={form.odometer} onChange={e => setForm({ ...form, odometer: e.target.value })} /></Grid>
                     </Grid>
                 </DialogContent>
