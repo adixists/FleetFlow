@@ -7,6 +7,7 @@ import {
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { PALETTE } from '../tokens';
 import { alpha } from '@mui/material/styles';
+import api from '../api/axios';
 
 export default function Login() {
     const { login } = useAuth();
@@ -20,7 +21,11 @@ export default function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(''); setLoading(true);
-        try { await login(email, password); navigate('/dashboard'); }
+        try {
+            const { data } = await api.post('/auth/login', { email, password });
+            login(data.token, data.user);
+            navigate('/dashboard');
+        }
         catch (err) { setError(err.response?.data?.error || 'Login failed. Check your credentials.'); }
         finally { setLoading(false); }
     };
