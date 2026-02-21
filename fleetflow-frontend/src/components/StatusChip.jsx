@@ -1,37 +1,32 @@
-import { Chip } from '@mui/material';
-
-const statusColors = {
-    // Vehicle statuses
-    available: { bg: '#1B5E20', color: '#A5D6A7', label: 'Available' },
-    on_trip: { bg: '#0D47A1', color: '#90CAF9', label: 'On Trip' },
-    in_shop: { bg: '#E65100', color: '#FFB74D', label: 'In Shop' },
-    retired: { bg: '#424242', color: '#BDBDBD', label: 'Retired' },
-    // Driver statuses
-    on_duty: { bg: '#1B5E20', color: '#A5D6A7', label: 'On Duty' },
-    off_duty: { bg: '#37474F', color: '#B0BEC5', label: 'Off Duty' },
-    suspended: { bg: '#B71C1C', color: '#EF9A9A', label: 'Suspended' },
-    // Trip states
-    draft: { bg: '#37474F', color: '#B0BEC5', label: 'Draft' },
-    dispatched: { bg: '#0D47A1', color: '#90CAF9', label: 'Dispatched' },
-    in_transit: { bg: '#6A1B9A', color: '#CE93D8', label: 'In Transit' },
-    completed: { bg: '#1B5E20', color: '#A5D6A7', label: 'Completed' },
-    cancelled: { bg: '#B71C1C', color: '#EF9A9A', label: 'Cancelled' },
-};
+import { Chip, Box } from '@mui/material';
+import { STATUS_COLORS } from '../tokens';
 
 export default function StatusChip({ status, size = 'small' }) {
-    const config = statusColors[status] || { bg: '#333', color: '#999', label: status };
+    const c = STATUS_COLORS[status] || { bg: 'rgba(148,163,184,0.1)', color: '#94A3B8', dot: '#94A3B8' };
+    const label = status?.replace('_', ' ') || status;
+
     return (
-        <Chip
-            label={config.label}
-            size={size}
-            sx={{
-                backgroundColor: config.bg,
-                color: config.color,
-                fontWeight: 600,
-                letterSpacing: '0.04em',
-                textTransform: 'uppercase',
-                fontSize: '0.7rem',
-            }}
-        />
+        <Box sx={{
+            display: 'inline-flex', alignItems: 'center', gap: 0.75,
+            px: 1.25, py: 0.45,
+            borderRadius: '6px',
+            backgroundColor: c.bg,
+            border: `1px solid ${c.color}22`,
+            fontSize: size === 'small' ? '0.68rem' : '0.78rem',
+            fontWeight: 700,
+            letterSpacing: '0.07em',
+            textTransform: 'uppercase',
+            color: c.color,
+            whiteSpace: 'nowrap',
+            userSelect: 'none',
+        }}>
+            <Box sx={{
+                width: 6, height: 6, borderRadius: '50%',
+                backgroundColor: c.dot,
+                boxShadow: `0 0 6px ${c.dot}`,
+                flexShrink: 0,
+            }} />
+            {label}
+        </Box>
     );
 }

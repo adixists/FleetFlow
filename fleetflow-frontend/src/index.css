@@ -6,38 +6,161 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar styling */
+/* ── Scrollbar ─────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: rgba(108, 99, 255, 0.3);
+  background: rgba(124, 111, 255, 0.25);
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(108, 99, 255, 0.5);
+  background: rgba(124, 111, 255, 0.45);
 }
 
-/* MUI DataGrid header override */
+/* ── Keyframes ─────────────────────────────── */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulseGlow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 111, 255, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 18px 3px rgba(124, 111, 255, 0.2);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* ── Page Entry ────────────────────────────── */
+.page-enter {
+  animation: fadeSlideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.card-enter {
+  animation: fadeSlideUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.card-enter:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.card-enter:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.card-enter:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.card-enter:nth-child(4) {
+  animation-delay: 180ms;
+}
+
+/* ── Recharts overrides ────────────────────── */
+.recharts-text,
+.recharts-cartesian-axis-tick-value {
+  fill: #7E8FA8 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 11px !important;
+}
+
+.recharts-legend-item-text {
+  color: #7E8FA8 !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12px !important;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.05) !important;
+}
+
+.recharts-tooltip-wrapper {
+  outline: none;
+}
+
+/* ── MUI DataGrid tweaks ───────────────────── */
 .MuiDataGrid-columnHeaders {
   font-weight: 700 !important;
-  text-transform: uppercase;
-  font-size: 0.75rem !important;
-  letter-spacing: 0.05em;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.07em;
 }
 
-/* Smooth transitions */
-a, button {
-  transition: all 0.2s ease;
+/* ── Glassmorphism utility ─────────────────── */
+.glass {
+  background: rgba(15, 22, 41, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ── Live pulse dot ────────────────────────── */
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #07EDB2;
+  box-shadow: 0 0 0 0 rgba(7, 237, 178, 0.5);
+  animation: livePulse 2s ease-out infinite;
+}
+
+@keyframes livePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(7, 237, 178, 0.5);
+  }
+
+  70% {
+    box-shadow: 0 0 0 7px rgba(7, 237, 178, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(7, 237, 178, 0);
+  }
 }
